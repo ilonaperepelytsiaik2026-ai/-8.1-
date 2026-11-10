@@ -1,0 +1,81 @@
+/*1. Вияснити, чи є серед цих символів трійка сусідніх букв “OGO” або “AGA”.
+2. Замінити кожну трійка сусідніх букв “OGO” або “AGA” парою зірочок “**”.*/
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+// ПРОТОТИПИ ФУНКЦІЙ
+
+bool Include(const char* str); // Шукає підрядки "OGO" або "AGA"
+char* Change(char* str);       // Замінює "OGO" та "AGA" на "**"
+
+int main() {
+    char str[101];
+    cout << "Enter string: ";
+    cin.getline(str, 100);
+
+    // 1. Перевірка наявності шуканих елементів
+    if (Include(str))
+        cout << "String contains 'OGO' or 'AGA'" << endl;
+    else
+        cout << "String does NOT contain 'OGO' or 'AGA'" << endl;
+
+    // 2. Виконання заміни
+    char* dest = new char[151];
+    strcpy(dest, str);
+
+    Change(dest);
+
+    cout << "Modified string (param) : " << str << endl;
+    cout << "Modified string (result): " << dest << endl;
+
+    delete[] dest;
+    return 0;
+}
+
+// РЕАЛІЗАЦІЯ ФУНКЦІЙ
+
+// 1. Ітераційний пошук
+bool Include(const char* str) {
+    if (strlen(str) < 3) return false;
+
+    for (int i = 0; str[i + 2] != '\0'; i++) {
+        if ((str[i] == 'O' && str[i + 1] == 'G' && str[i + 2] == 'O') ||
+            (str[i] == 'A' && str[i + 1] == 'G' && str[i + 2] == 'A')) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// 2. Ітераційна заміна
+char* Change(char* str) {
+    size_t len = strlen(str);
+    if (len < 3) return str;
+
+    char* tmp = new char[len + 1];
+    char* t = tmp;
+    *t = '\0';
+
+    size_t i = 0;
+    while (i < len) {
+        // Перевіряємо трійку символів
+        if (i <= len - 3 &&
+            ((str[i] == 'O' && str[i + 1] == 'G' && str[i + 2] == 'O') ||
+                (str[i] == 'A' && str[i + 1] == 'G' && str[i + 2] == 'A'))) {
+
+            strcat(t, "**");
+            t += 2;
+            i += 3; // Пропускаємо 3 символи ("OGO" або "AGA")
+        }
+        else {
+            *t++ = str[i++];
+            *t = '\0';
+        }
+    }
+    strcpy(str, tmp);
+    delete[] tmp;
+    return str;
+}
